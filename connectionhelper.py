@@ -48,3 +48,20 @@ def removeIllegal(circuits, possibleConnections):
 	allIllegal = hasIllegal.logical_and(hasLegal.logical_not())
 
 	return allIllegal
+
+def findConnectableQubits(start_qubit, needed, connections, rng):
+	qCons = connections[start_qubit]
+	qConL = rng.shuffle(list(qCons))
+	if needed > connections[start_qubit]:
+		return torch.tensor()
+	
+	foundCons = [start_qubit]
+	i = 0
+	while ((len(foundCons) < needed) and i < len(qConL)):
+		con = qConL[i]
+
+		i += 1
+
+	rng.choice(connections[start_qubit])
+
+
