@@ -18,10 +18,10 @@ def makeQubitToConnectionsList(connections):
 	connectionMapping = [set() for _ in range(int(torch.max(connections)) + 1)]
 
 	for q1, q2 in connections:
-		q1 = int(q1)
-		q2 = int(q2)
-		connectionMapping[q1].add(q2)
-		connectionMapping[q2].add(q1)
+		q1_i = int(q1)
+		q2_i = int(q2)
+		connectionMapping[q1_i].add(q2_i)
+		connectionMapping[q2_i].add(q1_i)
 		
 	return connectionMapping
 
