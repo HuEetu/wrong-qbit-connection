@@ -74,20 +74,20 @@ def findIllegal(circuits, possibleConnections):
 def findConnectableQubits(connections, needed):
 	combinations = itertools.combinations(range(len(connections)), needed)
 
-	possibleSet = set()
+	possibleQubits = []
 	for c in combinations:
-		conList = []
+		c_set = set(c)
+		all_connected = True
 		for q in c:
 			qubits = set(connections[q])
 			qubits.add(q)
-			conList.append(qubits)
+			is_connected = c_set.issubset(qubits)
+			all_connected = all_connected and is_connected
 		
-		qubitIntersection = frozenset(set.intersection(*conList))
 
-		if (len(qubitIntersection) >= needed):
-			possibleSet.add(qubitIntersection)
-	
-	possibleQubits = [set(qi) for qi in possibleSet]
+		if (all_connected):
+			possibleQubits.append(c_set)
+
 	return possibleQubits
 
 		

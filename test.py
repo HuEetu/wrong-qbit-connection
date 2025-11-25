@@ -49,7 +49,13 @@ def getTestGates(set=0):
 def getTestConnections(set=0):
 	connectionSets =[
 		torch.tensor([(0, 1), (0, 2), (0, 3), (0, 4)]),
-		torch.tensor([(0,1), (0,2), (0,3), (0,4), (1, 2)])
+		torch.tensor([(0,1), (0,2), (0,3), (0,4), (1, 2)]),
+		torch.tensor([
+			(0, 1), (0, 2), (0, 3), (0, 4),
+			(1, 2), (1, 3),
+			(2, 4),
+			(3, 4)
+		])
 	]
 
 	return connectionSets[set]
@@ -100,10 +106,21 @@ def getLegalAndIllegalIndicesTest():
 	print(good)
 	print(bad)
 
+def connectableComplicateTest():
+	cons = getTestConnections(2)
+	consList = connectionhelper.makeQubitToConnectionsList(cons)
+	print(consList)
+
+
+	possible = connectionhelper.findConnectableQubits(consList, 3)
+
+	print(possible)
+
 if __name__ == "__main__":
 	#existingPairsTest()
 	#removeIllegalTest()
 	#possibleConnectionsTest()
 	#makeQubitToConnectionsTest()
 	#findConnectionsTest()
-	getLegalAndIllegalIndicesTest()
+	#getLegalAndIllegalIndicesTest()
+	connectableComplicateTest()
