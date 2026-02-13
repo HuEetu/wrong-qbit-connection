@@ -41,6 +41,29 @@ def getTestGates(set=0):
 				[0, 8, -3],
 				[-1, 0, 2]
 			]
+		]),
+		torch.tensor([
+			[
+				[1, 2, 3, 9, 9, 9],
+				[2, 3, 0, 9, 9, 9],
+				[3, 5, 0, 9, 9, 9],
+				[-3, 8, -3, 9, 9, 9],
+				[-1, 0, 2, 9, 9, 9]
+			],
+			[
+				[1, 0, 3, 9, 9, 9],
+				[2, 3, 0, 9, 9, 9],
+				[3, -3, -1, 9, 9, 9],
+				[-3, 8, -3, 9, 9, 9],
+				[-1, 0, 1, 9, 9, 9]
+			],
+			[
+				[1, 2, 3, 9, 9, 9],
+				[2, 3, 0, 9, 9, 9],
+				[0, 5, 0, 9, 9, 9],
+				[0, 8, -3, 9, 9, 9],
+				[-1, 0, 2, 9, 9, 9]
+			]
 		])
 	]
 
@@ -126,12 +149,26 @@ def findIllegalShapeTest():
 	print(good)
 	print(bad.shape)
 
+def paddingTest():
+	gates = getTestGates(2)
+	cons = getTestConnections(2)
+
+	ignore = torch.tensor([0,9])
+	good, bad = connectionhelper.getLegalAndIllegalCircuitIndices(
+		gates, cons, ignore=ignore
+	)
+	print(good.shape)
+	print(good)
+	print(bad.shape)
+	print(bad)
+
 if __name__ == "__main__":
-	#existingPairsTest()
-	#removeIllegalTest()
-	#possibleConnectionsTest()
-	#makeQubitToConnectionsTest()
-	#findConnectionsTest()
-	#getLegalAndIllegalIndicesTest()
-	#connectableComplicateTest()
+	existingPairsTest()
+	removeIllegalTest()
+	possibleConnectionsTest()
+	makeQubitToConnectionsTest()
+	findConnectionsTest()
+	getLegalAndIllegalIndicesTest()
+	connectableComplicateTest()
 	findIllegalShapeTest()
+	paddingTest()

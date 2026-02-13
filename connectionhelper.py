@@ -25,7 +25,7 @@ def makeQubitToConnectionsList(connections):
 		
 	return connectionMapping
 
-def findConnections(circuits):
+def findConnections(circuits, ignore=torch.tensor([0])):
 	# reshape so that the broadcast is done correctly to (n, q, q, l)
 	# n = number of circuits, q = number of qubits, l = length of circuit
 	# (n, q, 1, l)
@@ -34,14 +34,14 @@ def findConnections(circuits):
 	circuitsr = circuits.reshape(circuits.shape[0], 1, *circuits.shape[1:])	
 	sumMatrix = circuitsc + circuitsr
 	sumIsZero = sumMatrix == 0
-	notZeroGate = (circuitsc != 0)
+	notIgnoredGate = torch.isin(circuitsc, ignore, invert=True)
 	areSame = circuitsc == circuitsr
-	connections = sumIsZero.logical_or(areSame).logical_and(notZeroGate)
+	connections = sumIsZero.logical_or(areSame).logical_and(notIgnoredGate)
 
 	return connections
 
-def findExistingConnectionPairs(gates, unique=True):
-	cons = findConnections(gates)
+def findExistingConnectionPairs(gates, unique=True, ignore=torch.tensor([0])):
+	cons = findConnections(gates, ignore=ignore)
 	conList = cons.nonzero()
 	conPairs = [[] for _ in range(cons.shape[0])]
 	
@@ -57,13 +57,13 @@ def findExistingConnectionPairs(gates, unique=True):
 	return conPairs
 
 
-def findIllegal(circuits, possibleConnections):
+def findIllegal(circuits, possibleConnections, ignore=torch.tensor([0])):
 	conMatrix = makeConnectionMatrix(connections=possibleConnections)
 	# reshape to (1, q, q, 1) to broadcast the matrix for number of circuits and
 	# the length of the circuits
 	conMatrix = conMatrix.reshape(1, *conMatrix.shape, 1)
 
-	parallelConnections = findConnections(circuits)
+	parallelConnections = findConnections(circuits, ignore=ignore)
 	illegalConnections = parallelConnections.logical_and(conMatrix == 0)
 
 	qubitHasIllegal = torch.any(illegalConnections, dim=1)
@@ -91,8 +91,10 @@ def findConnectableQubits(connections, needed):
 	return possibleQubits
 
 		
-def getLegalAndIllegalCircuitIndices(circuits, possibleConnections):
-	column_has_illegal = findIllegal(circuits, possibleConnections)
+def getLegalAndIllegalCircuitIndices(
+	circuits, possibleConnections, ignore=torch.tensor([0])
+):
+	column_has_illegal = findIllegal(circuits, possibleConnections, ignore)
 	column_has_illegal.shape
 	circuit_has_illegal = column_has_illegal.any(dim=1)
 	good = (circuit_has_illegal == 0).nonzero()
