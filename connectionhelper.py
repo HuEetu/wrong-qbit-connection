@@ -62,6 +62,7 @@ def findIllegal(circuits, possibleConnections, ignore=torch.tensor([0])):
 	# reshape to (1, q, q, 1) to broadcast the matrix for number of circuits and
 	# the length of the circuits
 	conMatrix = conMatrix.reshape(1, *conMatrix.shape, 1)
+	conMatrix = conMatrix.to(circuits.device)
 
 	parallelConnections = findConnections(circuits, ignore=ignore)
 	illegalConnections = parallelConnections.logical_and(conMatrix == 0)
