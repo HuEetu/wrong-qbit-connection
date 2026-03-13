@@ -57,7 +57,10 @@ def findExistingConnectionPairs(gates, unique=True, ignore=torch.tensor([0])):
 	return conPairs
 
 
-def findIllegal(circuits, possibleConnections, ignore=torch.tensor([0])):
+def findIllegal(
+	circuits, possibleConnections, ignore=torch.tensor([0]),
+	find_by_qubit=False
+):
 	conMatrix = makeConnectionMatrix(connections=possibleConnections)
 	# reshape to (1, q, q, 1) to broadcast the matrix for number of circuits and
 	# the length of the circuits
@@ -68,6 +71,8 @@ def findIllegal(circuits, possibleConnections, ignore=torch.tensor([0])):
 	illegalConnections = parallelConnections.logical_and(conMatrix == 0)
 
 	qubitHasIllegal = torch.any(illegalConnections, dim=1)
+	if find_by_qubit:
+		return qubitHasIllegal
 	columnHasIllegal = torch.any(qubitHasIllegal, dim=1)
 
 	return columnHasIllegal
